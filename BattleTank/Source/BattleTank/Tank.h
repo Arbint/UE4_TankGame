@@ -39,11 +39,13 @@ public:
 		FName TorretSocketName = NAME_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 		FName BarrelSocketName = NAME_None;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerEye")
 		USpringArmComponent* CameraBoom;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerEye")
+		USceneComponent* CameraBoomAzimuthGimbal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerEye")
 		UCameraComponent* PlayerEye;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerEye")
 		float TankAimingSensitiviy = 100.0f;
 public:
 	void LookUp(float amount);

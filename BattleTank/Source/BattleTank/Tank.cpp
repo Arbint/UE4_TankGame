@@ -17,9 +17,13 @@ ATank::ATank()
 	TankBase->SetSimulatePhysics(true);
 	TankBase->SetMassOverrideInKg(NAME_None, 40000.0f);
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
+	CameraBoomAzimuthGimbal = CreateDefaultSubobject<USceneComponent>("CameraBoomAzimuthGimbal");
+	CameraBoomAzimuthGimbal->SetupAttachment(RootComponent);
 	PlayerEye = CreateDefaultSubobject<UCameraComponent>("PlayerEye");
-	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->SetupAttachment(CameraBoomAzimuthGimbal);
+	CameraBoom->bInheritRoll = false;
 	PlayerEye->SetupAttachment(CameraBoom);
+
 	//CameraBoom->bUsePawnControlRotation = true;
 }
 
@@ -45,12 +49,19 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::LookUp(float amount)
 {
 	//AddControllerPitchInput(amount * GetWorld()->GetDeltaSeconds() * TankAimingSensitiviy);
-	CameraBoom->AddLocalRotation(FRotator(0.0f, 0.0f, amount * GetWorld()->GetDeltaSeconds() * TankAimingSensitiviy));
+	CameraBoom->AddLocalRotation(FRotator(amount * GetWorld()->GetDeltaSeconds() * TankAimingSensitiviy,0.0f, 0.0f));
+	
+	//Clamp the rotation
+	float CameraBoomPitch = FMath::Clamp(CameraBoom->GetRelativeTransform().Rotator().Pitch,-90.f, 90.0f);
+	CameraBoom->SetRelativeRotation(FRotator(
+		FMath::Clamp(CameraBoom->GetRelativeTransform().Rotator().Pitch, -75.f, 75.0f),
+		FMath::Clamp(CameraBoom->GetRelativeTransform().Rotator().Yaw, -75.f, 75.0f),
+		FMath::Clamp(CameraBoom->GetRelativeTransform().Rotator().Roll, -75.f, 75.0f)));
 }
 
 void ATank::LookRight(float amount)
 {
 	//AddControllerYawInput(amount * GetWorld()->GetDeltaSeconds() * TankAimingSensitiviy);
-	CameraBoom->AddLocalRotation(FRotator(0.0f,amount * GetWorld()->GetDeltaSeconds() * TankAimingSensitiviy ,0.0f));
+	CameraBoomAzimuthGimbal->AddLocalRotation(FRotator(0.0f,amount * GetWorld()->GetDeltaSeconds() * TankAimingSensitiviy ,0.0f));
 }
 

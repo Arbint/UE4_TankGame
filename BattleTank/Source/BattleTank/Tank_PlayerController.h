@@ -21,6 +21,6 @@ public:
 	virtual void SetupInputComponent() override;
 	void LookUp(float amount);
 	void LookRight(float amount);
-
+private:
 	ATank* TankPossessed;
 };
