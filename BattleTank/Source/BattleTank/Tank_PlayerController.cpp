@@ -2,25 +2,26 @@
 
 #include "Tank_PlayerController.h"
 #include "Engine/World.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Tank.h"
 
 
 ATank_PlayerController::ATank_PlayerController()
 {
-
+	
 }
 
 void ATank_PlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	TankPossessed = (ATank*)GetPawn();
+	TankPossessed = GetControlledTank();
 }
-
 void ATank_PlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAxis("AimPitch", this, &ATank_PlayerController::LookUp);
 	InputComponent->BindAxis("AimYaw", this, &ATank_PlayerController::LookRight);
+	InputComponent->BindAction("QuitGame", IE_Pressed, this, &ATank_PlayerController::QuitGame);
 }
 
 void ATank_PlayerController::LookUp(float amount)
@@ -38,4 +39,14 @@ void ATank_PlayerController::LookRight(float amount)
 	{
 		TankPossessed->LookRight(amount);
 	}
+}
+
+ATank* ATank_PlayerController::GetControlledTank()
+{
+	return (ATank*)GetPawn();
+}
+
+void ATank_PlayerController::QuitGame()
+{
+	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit);
 }

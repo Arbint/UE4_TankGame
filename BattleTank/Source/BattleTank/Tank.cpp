@@ -15,7 +15,6 @@ ATank::ATank()
 	TankTorret->SetupAttachment(RootComponent, TorretSocketName);
 	TankBarrel->SetupAttachment(TankTorret, BarrelSocketName);
 	TankBase->SetSimulatePhysics(true);
-	TankBase->SetMassOverrideInKg(NAME_None, 40000.0f);
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
 	CameraBoomAzimuthGimbal = CreateDefaultSubobject<USceneComponent>("CameraBoomAzimuthGimbal");
 	CameraBoomAzimuthGimbal->SetupAttachment(RootComponent);
@@ -31,6 +30,7 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
+	TankBase->SetMassOverrideInKg(NAME_None, 40000.0f);
 }
 
 // Called every frame
