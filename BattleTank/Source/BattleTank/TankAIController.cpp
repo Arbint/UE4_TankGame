@@ -24,6 +24,11 @@ void ATankAIController::BeginPlay()
 	GetPlayerTank();
 }
 
+void ATankAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
 ATank* ATankAIController::GetPlayerTank()
 {
 	APlayerController* FistPlayerController = GetWorld()->GetFirstPlayerController();
@@ -32,11 +37,9 @@ ATank* ATankAIController::GetPlayerTank()
 		ATank* tank = (ATank*)FistPlayerController->GetPawn();
 		if (tank)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Find Player's tank: %s"), *(tank->GetName()));
 			return tank;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Cannot find player's tank"));
 	return nullptr;
 }
 

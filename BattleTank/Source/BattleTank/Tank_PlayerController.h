@@ -22,7 +22,20 @@ public:
 	void LookUp(float amount);
 	void LookRight(float amount);
 	ATank* GetControlledTank();
+	virtual void Tick(float DeltaSeconds) override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	float crossHairXLocation = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	float crossHairYLocation = 0.33333f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	float sightReach = 1000000;
+
 private:
 	ATank* TankPossessed;
 	void QuitGame();
+	void AimAtCrossHair();
+	bool GetCrossHairLookDirection(FVector2D ScreeLocation, FVector& LookDirection);
+	bool LineTraceThroughCrosshair(FHitResult &outHit);
+	FVector2D GetCrossHairScreenLocation();
 };

@@ -20,6 +20,7 @@ public:
 	ATankAIController();
 	ATank* GetPosessedTank();
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 private:
 	ATank* PossessedTank;
 	ATank* GetPlayerTank();

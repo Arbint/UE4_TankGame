@@ -16,6 +16,13 @@ void ATank_PlayerController::BeginPlay()
 	Super::BeginPlay();
 	TankPossessed = GetControlledTank();
 }
+
+void ATank_PlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	AimAtCrossHair();
+}
+
 void ATank_PlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -46,7 +53,57 @@ ATank* ATank_PlayerController::GetControlledTank()
 	return (ATank*)GetPawn();
 }
 
+
+
 void ATank_PlayerController::QuitGame()
 {
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit);
 }
+
+void ATank_PlayerController::AimAtCrossHair()
+{
+	if (GetControlledTank())
+	{
+		FHitResult hit;
+		if (LineTraceThroughCrosshair(hit))
+		{
+			FString HitObjectName = hit.GetActor()->GetName();
+			UE_LOG(LogTemp, Warning, TEXT("Hit Object is: %s"), *HitObjectName);
+		}
+	}
+}
+
+FVector2D ATank_PlayerController::GetCrossHairScreenLocation()
+{
+	int32 ViewPortSizeX;
+	int32 ViewPortSizeY;
+	GetViewportSize(ViewPortSizeX, ViewPortSizeY);
+	return FVector2D(ViewPortSizeX * crossHairXLocation, ViewPortSizeY * crossHairYLocation);
+}
+
+bool ATank_PlayerController::GetCrossHairLookDirection(FVector2D ScreeLocation, FVector& LookDirection)
+{
+	FVector CorssHairOverLappyingLocation;
+	return	DeprojectScreenPositionToWorld(
+		ScreeLocation.X, 
+		ScreeLocation.Y, 
+		CorssHairOverLappyingLocation, 
+		LookDirection);
+}
+
+bool ATank_PlayerController::LineTraceThroughCrosshair(FHitResult &outHit)
+{
+	FVector CrossHairLookDirection;
+	GetCrossHairLookDirection(GetCrossHairScreenLocation(), CrossHairLookDirection);
+	auto StartLocation = PlayerCameraManager->GetCameraLocation();
+	auto EndLocation = StartLocation + (CrossHairLookDirection * sightReach);
+	
+	bool bIsHitingByTracing = GetWorld()->LineTraceSingleByChannel(
+		outHit,
+		StartLocation,
+		EndLocation,
+		ECC_Visibility
+	);
+	return bIsHitingByTracing;
+}
+
