@@ -11,6 +11,7 @@
 
 class UAimingComponent;
 class UTankBarrel;
+class AProjectile;
 UCLASS()
 class BATTLETANK_API ATank : public APawn
 {
@@ -50,6 +51,15 @@ public:
 		UCameraComponent* PlayerEye;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerEye")
 		float TankAimingSensitiviy = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+		TSubclassOf<AProjectile> ProjectTileToFire;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+		float ProjectileLodingTime = 3;
+
+	
+
+
 public:
 	void LookUp(float amount);
 	void LookRight(float amount);
@@ -58,4 +68,7 @@ public:
 	void SetupFirePointToAimComp(UTankBarrel* FiringPointToSet);
 	void NurtualAim();
 	void Fire();
+	
+private:
+	float LastFireTime;
 };

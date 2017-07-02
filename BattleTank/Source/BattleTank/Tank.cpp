@@ -5,7 +5,8 @@
 #include "AimingComponent.h"
 #include "Engine/World.h"
 #include "TankBarrel.h"
-
+#include "UniversalFucs.h"
+#include "Projectile.h"
 // Sets default values
 ATank::ATank()
 {
@@ -38,6 +39,7 @@ void ATank::BeginPlay()
 	TankBase->SetMassOverrideInKg(NAME_None, 40000.0f);
 	SetupFirePointToAimComp(Barrel);
 	Barrel->setBaseTorret(TankTorret);
+	LastFireTime = -ProjectileLodingTime;
 }
 
 
@@ -88,6 +90,21 @@ void ATank::NurtualAim()
 
 void ATank::Fire()
 {
-	
+	bool bIsLoaded = (FPlatformTime::Seconds() - LastFireTime) >= ProjectileLodingTime;
+	if (Barrel && bIsLoaded)
+	{
+		FActorSpawnParameters ProjectileSpawnPrams;
+		
+		auto projectileFired = GetWorld()->SpawnActor<AProjectile>(
+			ProjectTileToFire, 
+			Barrel->GetSocketLocation("FiringPoint"),
+			Barrel->GetSocketRotation("FiringPoint"),
+			ProjectileSpawnPrams);
+		if (projectileFired)
+		{
+			projectileFired->launch(LaunchingSpeed);
+		}
+		LastFireTime = FPlatformTime::Seconds();
+	}
 }
 
