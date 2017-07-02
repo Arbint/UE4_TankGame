@@ -41,5 +41,6 @@ private:
 	bool GetCrossHairLookDirection(FVector2D ScreeLocation, FVector& LookDirection);
 	bool LineTraceThroughCrosshair(FHitResult &outHit);
 	FVector2D GetCrossHairScreenLocation();
+	void Fire();
 
 };

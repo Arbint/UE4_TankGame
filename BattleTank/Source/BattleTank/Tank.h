@@ -57,4 +57,5 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void SetupFirePointToAimComp(UTankBarrel* FiringPointToSet);
 	void NurtualAim();
+	void Fire();
 };

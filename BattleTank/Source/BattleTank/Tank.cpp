@@ -86,3 +86,8 @@ void ATank::NurtualAim()
 	AimingComponent->nurtualAiming();
 }
 
+void ATank::Fire()
+{
+	
+}
+

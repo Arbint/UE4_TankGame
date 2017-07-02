@@ -97,11 +97,6 @@ FVector2D ATank_PlayerController::GetCrossHairScreenLocation()
 	return FVector2D(ViewPortSizeX * crossHairXLocation, ViewPortSizeY * crossHairYLocation);
 }
 
-void ATank_PlayerController::Fire()
-{
-	GetControlledTank()->Fire();
-}
-
 bool ATank_PlayerController::GetCrossHairLookDirection(FVector2D ScreeLocation, FVector& LookDirection)
 {
 	FVector CorssHairOverLappyingLocation;
