@@ -67,8 +67,9 @@ void ATank_PlayerController::AimAtCrossHair()
 		FHitResult hit;
 		if (LineTraceThroughCrosshair(hit))
 		{
-			FString HitObjectName = hit.GetActor()->GetName();
-			UE_LOG(LogTemp, Warning, TEXT("Hit Object is: %s"), *HitObjectName);
+			FString hitActorName = hit.GetActor()->GetName();
+			//TESTED the hit is all correct
+			TankPossessed->AimAt(hit.Location);
 		}
 	}
 }

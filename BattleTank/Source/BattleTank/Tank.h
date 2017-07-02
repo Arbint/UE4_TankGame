@@ -9,6 +9,8 @@
 #include "Camera/CameraComponent.h"
 #include "Tank.generated.h"
 
+class UAimingComponent;
+class UTankBarrel;
 UCLASS()
 class BATTLETANK_API ATank : public APawn
 {
@@ -21,10 +23,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Functionality")
+		UAimingComponent* AimingComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
+		float LaunchingSpeed = 100000.0f;
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -33,8 +37,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 		UStaticMeshComponent* TankTorret;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
-		UStaticMeshComponent* TankBarrel;
-
+		UTankBarrel* Barrel;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 		FName TorretSocketName = NAME_None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
@@ -50,4 +53,7 @@ public:
 public:
 	void LookUp(float amount);
 	void LookRight(float amount);
+	void AimAt(FVector location);
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void SetupFirePointToAimComp(UTankBarrel* FiringPointToSet);
 };

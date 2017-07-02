@@ -1,0 +1,85 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+#include "AimingComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
+#include "TankBarrel.h"
+
+
+
+// Sets default values for this component's properties
+UAimingComponent::UAimingComponent()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
+
+	// ...
+}
+
+
+void UAimingComponent::AimingAt(FVector location, float LaunchSpeed)
+{
+	if (!FireingPoint)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Firing Point!"));
+		return;
+	}
+	FVector LaunchVelocity{};
+	FVector StartLocation = FireingPoint->GetSocketLocation(FName("FiringPoint"));;
+	//calculate the out launch velocity
+	//UE_LOG(LogTemp, Warning, TEXT("%s is now aiming form: %s, and aiming at: %s"),*(GetOwner()->GetName()), *(StartLocation.ToString()), *(location.ToString()));
+	//TESTED StartLocation, Destination Location are all correct.
+	FCollisionResponseParams CollisionResponse{};
+	TArray<AActor*> ActorToEgnore{GetOwner()};
+
+
+	bool bGetProjectileVelocity = UGameplayStatics::SuggestProjectileVelocity(
+		this,
+		LaunchVelocity,
+		StartLocation,
+		location,
+		LaunchSpeed,
+		false,
+		0,
+		0,
+		ESuggestProjVelocityTraceOption::DoNotTrace,//this is actually important to get a proper answer
+		CollisionResponse,
+		ActorToEgnore,
+		false
+		);
+	if (bGetProjectileVelocity)
+	{
+		FVector AimDirection = LaunchVelocity.GetSafeNormal();
+		//UE_LOG(LogTemp, Warning, TEXT("%s is looking at: %s"), *(GetOwner()->GetName()), *(AimDirection.ToString()));
+		MoveBarrelTowards(AimDirection);
+	}
+}
+
+// Called when the game starts
+void UAimingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	// ...
+}
+
+
+// Called every frame
+void UAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
+}
+
+
+void UAimingComponent::SetFiringPoint(UTankBarrel* FireingPointToSet)
+{
+	FireingPoint = FireingPointToSet;
+}
+
+void UAimingComponent::MoveBarrelTowards(FVector AimDirection)
+{
+	//Work out difference between current barrel rotation and  aimDirection and move the barrel
+	FireingPoint->elevateBarrel(10);
+}
+

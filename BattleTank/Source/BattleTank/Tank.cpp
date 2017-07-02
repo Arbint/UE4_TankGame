@@ -1,7 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+
 #include "Tank.h"
+#include "AimingComponent.h"
 #include "Engine/World.h"
+#include "TankBarrel.h"
 
 // Sets default values
 ATank::ATank()
@@ -10,10 +13,10 @@ ATank::ATank()
 	PrimaryActorTick.bCanEverTick = true;
 	TankBase = CreateDefaultSubobject<UStaticMeshComponent>("TankBase");
 	TankTorret = CreateDefaultSubobject<UStaticMeshComponent>("TankTorrect");
-	TankBarrel = CreateDefaultSubobject<UStaticMeshComponent>("TankBarrel");
+	Barrel = CreateDefaultSubobject<UTankBarrel>("TankBarrel");
 	RootComponent = TankBase;
 	TankTorret->SetupAttachment(RootComponent, TorretSocketName);
-	TankBarrel->SetupAttachment(TankTorret, BarrelSocketName);
+	Barrel->SetupAttachment(TankTorret, BarrelSocketName);
 	TankBase->SetSimulatePhysics(true);
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
 	CameraBoomAzimuthGimbal = CreateDefaultSubobject<USceneComponent>("CameraBoomAzimuthGimbal");
@@ -24,6 +27,8 @@ ATank::ATank()
 	PlayerEye->SetupAttachment(CameraBoom);
 
 	//CameraBoom->bUsePawnControlRotation = true;
+	AimingComponent = CreateDefaultSubobject<UAimingComponent>("AimingComponent");
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
@@ -31,13 +36,10 @@ void ATank::BeginPlay()
 {
 	Super::BeginPlay();
 	TankBase->SetMassOverrideInKg(NAME_None, 40000.0f);
+	SetupFirePointToAimComp(Barrel);
 }
 
-// Called every frame
-void ATank::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
+
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -63,5 +65,18 @@ void ATank::LookRight(float amount)
 {
 	//AddControllerYawInput(amount * GetWorld()->GetDeltaSeconds() * TankAimingSensitiviy);
 	CameraBoomAzimuthGimbal->AddLocalRotation(FRotator(0.0f,amount * GetWorld()->GetDeltaSeconds() * TankAimingSensitiviy ,0.0f));
+}
+
+void ATank::AimAt(FVector location)
+{
+	AimingComponent->AimingAt(location, LaunchingSpeed);
+}
+
+void ATank::SetupFirePointToAimComp(UTankBarrel* FiringPointToSet)
+{
+	if (AimingComponent)
+	{
+		AimingComponent->SetFiringPoint(FiringPointToSet);
+	}
 }
 
