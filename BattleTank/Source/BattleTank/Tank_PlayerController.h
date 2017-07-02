@@ -31,6 +31,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	float sightReach = 1000000;
 
+	UFUNCTION(BlueprintCallable, Category = "Log")
+		void logOnScreenInfo(FString info);
+
 private:
 	ATank* TankPossessed;
 	void QuitGame();
@@ -38,4 +41,5 @@ private:
 	bool GetCrossHairLookDirection(FVector2D ScreeLocation, FVector& LookDirection);
 	bool LineTraceThroughCrosshair(FHitResult &outHit);
 	FVector2D GetCrossHairScreenLocation();
+
 };

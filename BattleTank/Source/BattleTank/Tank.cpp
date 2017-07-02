@@ -37,6 +37,7 @@ void ATank::BeginPlay()
 	Super::BeginPlay();
 	TankBase->SetMassOverrideInKg(NAME_None, 40000.0f);
 	SetupFirePointToAimComp(Barrel);
+	Barrel->setBaseTorret(TankTorret);
 }
 
 
@@ -78,5 +79,10 @@ void ATank::SetupFirePointToAimComp(UTankBarrel* FiringPointToSet)
 	{
 		AimingComponent->SetFiringPoint(FiringPointToSet);
 	}
+}
+
+void ATank::NurtualAim()
+{
+	AimingComponent->nurtualAiming();
 }
 

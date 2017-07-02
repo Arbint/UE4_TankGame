@@ -19,19 +19,18 @@ UAimingComponent::UAimingComponent()
 
 void UAimingComponent::AimingAt(FVector location, float LaunchSpeed)
 {
-	if (!FireingPoint)
+	if (!Barrel)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No Firing Point!"));
 		return;
 	}
 	FVector LaunchVelocity{};
-	FVector StartLocation = FireingPoint->GetSocketLocation(FName("FiringPoint"));;
+	FVector StartLocation = Barrel->GetSocketLocation(FName("FiringPoint"));;
 	//calculate the out launch velocity
 	//UE_LOG(LogTemp, Warning, TEXT("%s is now aiming form: %s, and aiming at: %s"),*(GetOwner()->GetName()), *(StartLocation.ToString()), *(location.ToString()));
 	//TESTED StartLocation, Destination Location are all correct.
 	FCollisionResponseParams CollisionResponse{};
 	TArray<AActor*> ActorToEgnore{GetOwner()};
-
 
 	bool bGetProjectileVelocity = UGameplayStatics::SuggestProjectileVelocity(
 		this,
@@ -52,6 +51,14 @@ void UAimingComponent::AimingAt(FVector location, float LaunchSpeed)
 		FVector AimDirection = LaunchVelocity.GetSafeNormal();
 		//UE_LOG(LogTemp, Warning, TEXT("%s is looking at: %s"), *(GetOwner()->GetName()), *(AimDirection.ToString()));
 		MoveBarrelTowards(AimDirection);
+		auto time = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("%f: Barrel Moving at rate: %f"), time, 1.0f);
+	}
+	else
+	{
+		auto time = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("%f: Cannot resolve the solution"), time);
+		nurtualAiming();
 	}
 }
 
@@ -74,12 +81,23 @@ void UAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UAimingComponent::SetFiringPoint(UTankBarrel* FireingPointToSet)
 {
-	FireingPoint = FireingPointToSet;
+	Barrel = FireingPointToSet;
+}
+
+void UAimingComponent::nurtualAiming()
+{
+	MoveBarrelTowards(GetOwner()->GetActorForwardVector());
 }
 
 void UAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
 	//Work out difference between current barrel rotation and  aimDirection and move the barrel
-	FireingPoint->elevateBarrel(10);
+	FRotator BarrelCurrentRotation = Barrel->GetForwardVector().Rotation();
+	FRotator GoalAimingRoation = AimDirection.GetSafeNormal().Rotation();
+
+	FRotator DeltaRotaion = GoalAimingRoation - BarrelCurrentRotation;
+
+	Barrel->elevateBarrel(DeltaRotaion.Pitch);
+	Barrel->spinBarrel(DeltaRotaion.Yaw);
 }
 

@@ -26,7 +26,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 public:
 	void SetFiringPoint(UTankBarrel* FireingPointToSet);
+	void nurtualAiming();
 private:
-	UTankBarrel* FireingPoint;
+	UTankBarrel* Barrel;
 	void MoveBarrelTowards(FVector AimDirection);
 };

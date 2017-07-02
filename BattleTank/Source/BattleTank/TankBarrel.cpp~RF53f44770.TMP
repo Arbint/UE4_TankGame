@@ -18,8 +18,9 @@ void UTankBarrel::spinBarrel(float relativeSpeed)
 {
 	if (!BaseTorret) { return; }
 	relativeSpeed = FMath::Clamp(relativeSpeed, -1.0f, 1.0f);
-	auto YawIncrement = relativeSpeed * maxSpinSpeed * GetWorld()->GetDeltaSeconds();
-	BaseTorret->AddLocalRotation(FRotator(0.0f, YawIncrement, 0.0f));
+	auto YawIncrement = relativeSpeed * maxSpinSpeed * GetWorld()->GetTimeSeconds();
+
+	BaseTorret->AddLocalRotation(FRotator(0.0, YawIncrement, 0.0f));
 }
 
 void UTankBarrel::setBaseTorret(UStaticMeshComponent* BaseTorretToSet)

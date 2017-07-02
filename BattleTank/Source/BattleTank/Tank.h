@@ -56,4 +56,5 @@ public:
 	void AimAt(FVector location);
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void SetupFirePointToAimComp(UTankBarrel* FiringPointToSet);
+	void NurtualAim();
 };

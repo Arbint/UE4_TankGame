@@ -2,6 +2,7 @@
 
 #include "Tank_PlayerController.h"
 #include "Engine/World.h"
+#include "Engine/Engine.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Tank.h"
 
@@ -21,6 +22,14 @@ void ATank_PlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	AimAtCrossHair();
+}
+
+void ATank_PlayerController::logOnScreenInfo(FString info)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, info);
+	}
 }
 
 void ATank_PlayerController::SetupInputComponent()
@@ -70,6 +79,11 @@ void ATank_PlayerController::AimAtCrossHair()
 			FString hitActorName = hit.GetActor()->GetName();
 			//TESTED the hit is all correct
 			TankPossessed->AimAt(hit.Location);
+		}
+		else
+		{
+			logOnScreenInfo("line Traced Nothing!");
+			TankPossessed->NurtualAim();
 		}
 	}
 }
