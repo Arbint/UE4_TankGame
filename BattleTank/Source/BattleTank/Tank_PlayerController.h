@@ -42,5 +42,7 @@ private:
 	bool LineTraceThroughCrosshair(FHitResult &outHit);
 	FVector2D GetCrossHairScreenLocation();
 	void Fire();
-
+	void SetLeftTrackthrottle(float amount);
+	void SetRightTrackthrottle(float amount);
+	void MoveForward(float amount);
 };

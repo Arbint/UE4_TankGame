@@ -7,6 +7,8 @@
 #include "TankBarrel.h"
 #include "UniversalFucs.h"
 #include "Projectile.h"
+#include "TrackComponet.h"
+#include "TankMovementComponent.h"
 // Sets default values
 ATank::ATank()
 {
@@ -15,8 +17,12 @@ ATank::ATank()
 	TankBase = CreateDefaultSubobject<UStaticMeshComponent>("TankBase");
 	TankTorret = CreateDefaultSubobject<UStaticMeshComponent>("TankTorrect");
 	Barrel = CreateDefaultSubobject<UTankBarrel>("TankBarrel");
+	LeftTankTrack = CreateDefaultSubobject<UTrackComponet>("LeftTankTrack");
+	RightTankTrack = CreateDefaultSubobject<UTrackComponet>("RightTankTrack");
 	RootComponent = TankBase;
 	TankTorret->SetupAttachment(RootComponent, TorretSocketName);
+	LeftTankTrack->SetupAttachment(RootComponent);
+	RightTankTrack->SetupAttachment(RootComponent);
 	Barrel->SetupAttachment(TankTorret, BarrelSocketName);
 	TankBase->SetSimulatePhysics(true);
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
@@ -29,6 +35,7 @@ ATank::ATank()
 
 	//CameraBoom->bUsePawnControlRotation = true;
 	AimingComponent = CreateDefaultSubobject<UAimingComponent>("AimingComponent");
+	MovementComponent = CreateDefaultSubobject<UTankMovementComponent>("MovementComponent");
 	PrimaryActorTick.bCanEverTick = false;
 }
 
@@ -90,7 +97,7 @@ void ATank::NurtualAim()
 
 void ATank::Fire()
 {
-	bool bIsLoaded = (FPlatformTime::Seconds() - LastFireTime) >= ProjectileLodingTime;
+	bool bIsLoaded = (GetWorld()->GetTimeSeconds() - LastFireTime) >= ProjectileLodingTime;
 	if (Barrel && bIsLoaded)
 	{
 		FActorSpawnParameters ProjectileSpawnPrams;
@@ -104,7 +111,17 @@ void ATank::Fire()
 		{
 			projectileFired->launch(LaunchingSpeed);
 		}
-		LastFireTime = FPlatformTime::Seconds();
+		LastFireTime = GetWorld()->GetTimeSeconds();
 	}
+}
+
+void ATank::SetTrackthrottle(UTrackComponet* tracToSet, float amount)
+{
+	tracToSet->SetThrottle(amount);
+}
+
+void ATank::MoveForward(float amount)
+{
+	MovementComponent->IntendMoveForward(amount);
 }
 

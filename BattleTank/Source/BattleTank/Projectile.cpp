@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Projectile.h"
-
+#include "UniversalFucs.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -27,7 +27,15 @@ void AProjectile::Tick(float DeltaTime)
 
 void AProjectile::launch(float launchSpeed)
 {
-	ProjectlieComp->SetActive(true);
-	ProjectlieComp->SetVelocityInLocalSpace(FVector::ForwardVector * launchSpeed);
+	if (ProjectlieComp)
+	{
+		ProjectlieComp->SetActive(true);
+		ProjectlieComp->SetVelocityInLocalSpace(FVector::ForwardVector * launchSpeed);
+	}
+	else
+	{
+		UUniversalFucs::ScreenMessage("No Projectile Component");
+	}
+
 }
 

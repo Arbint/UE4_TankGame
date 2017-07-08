@@ -5,6 +5,7 @@
 #include "Engine/Engine.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Tank.h"
+#include "UniversalFucs.h"
 
 
 ATank_PlayerController::ATank_PlayerController()
@@ -26,10 +27,7 @@ void ATank_PlayerController::Tick(float DeltaSeconds)
 
 void ATank_PlayerController::logOnScreenInfo(FString info)
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, info);
-	}
+	UUniversalFucs::ScreenMessage(info);
 }
 
 void ATank_PlayerController::SetupInputComponent()
@@ -39,6 +37,9 @@ void ATank_PlayerController::SetupInputComponent()
 	InputComponent->BindAxis("AimYaw", this, &ATank_PlayerController::LookRight);
 	InputComponent->BindAction("QuitGame", IE_Pressed, this, &ATank_PlayerController::QuitGame);
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATank_PlayerController::Fire);
+	InputComponent->BindAxis("LeftTrackthrottle", this, &ATank_PlayerController::SetLeftTrackthrottle);
+	InputComponent->BindAxis("RightTrackthrottle", this, &ATank_PlayerController::SetRightTrackthrottle);
+	InputComponent->BindAxis("MoveForward", this, &ATank_PlayerController::MoveForward);
 }
 
 void ATank_PlayerController::LookUp(float amount)
@@ -63,8 +64,6 @@ ATank* ATank_PlayerController::GetControlledTank()
 	return (ATank*)GetPawn();
 }
 
-
-
 void ATank_PlayerController::QuitGame()
 {
 	UKismetSystemLibrary::QuitGame(GetWorld(), this, EQuitPreference::Quit);
@@ -83,7 +82,6 @@ void ATank_PlayerController::AimAtCrossHair()
 		}
 		else
 		{
-			logOnScreenInfo("line Traced Nothing!");
 			TankPossessed->NurtualAim();
 		}
 	}
@@ -99,7 +97,40 @@ FVector2D ATank_PlayerController::GetCrossHairScreenLocation()
 
 void ATank_PlayerController::Fire()
 {
-	GetControlledTank()->Fire();
+	if (TankPossessed)
+	{
+		TankPossessed->Fire();
+	}
+}
+
+void ATank_PlayerController::SetLeftTrackthrottle(float amount)
+{
+	if (amount ==0)
+	{
+		return;
+	}
+	if (TankPossessed)
+	{
+		TankPossessed->SetTrackthrottle(TankPossessed->LeftTankTrack, amount);
+	}
+}
+
+void ATank_PlayerController::SetRightTrackthrottle(float amount)
+{
+	if (amount == 0)
+	{
+		return;
+	}
+	if (TankPossessed)
+	{
+		TankPossessed->SetTrackthrottle(TankPossessed->RightTankTrack, amount);
+	}
+}
+
+void ATank_PlayerController::MoveForward(float amount)
+{
+	if (!TankPossessed || amount == 0) { return; }
+	TankPossessed->MoveForward(amount);
 }
 
 bool ATank_PlayerController::GetCrossHairLookDirection(FVector2D ScreeLocation, FVector& LookDirection)

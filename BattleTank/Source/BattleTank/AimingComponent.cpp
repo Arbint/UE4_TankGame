@@ -52,12 +52,10 @@ void UAimingComponent::AimingAt(FVector location, float LaunchSpeed)
 		//UE_LOG(LogTemp, Warning, TEXT("%s is looking at: %s"), *(GetOwner()->GetName()), *(AimDirection.ToString()));
 		MoveBarrelTowards(AimDirection);
 		auto time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f: Barrel Moving at rate: %f"), time, 1.0f);
 	}
 	else
 	{
 		auto time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f: Cannot resolve the solution"), time);
 		nurtualAiming();
 	}
 }

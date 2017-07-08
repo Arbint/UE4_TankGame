@@ -12,6 +12,8 @@
 class UAimingComponent;
 class UTankBarrel;
 class AProjectile;
+class UTrackComponet;
+class UTankMovementComponent;
 UCLASS()
 class BATTLETANK_API ATank : public APawn
 {
@@ -25,8 +27,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	//Functionality Component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Functionality")
 		UAimingComponent* AimingComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Functionality")
+		UTankMovementComponent* MovementComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 		float LaunchingSpeed = 100000.0f;
 public:	
@@ -35,6 +41,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 		UStaticMeshComponent* TankBase;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+		UTrackComponet* LeftTankTrack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+		UTrackComponet* RightTankTrack;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 		UStaticMeshComponent* TankTorret;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
@@ -68,7 +78,8 @@ public:
 	void SetupFirePointToAimComp(UTankBarrel* FiringPointToSet);
 	void NurtualAim();
 	void Fire();
-	
+	void SetTrackthrottle(UTrackComponet* tracToSet, float amount);
+	void MoveForward(float amount);
 private:
 	float LastFireTime;
 };
